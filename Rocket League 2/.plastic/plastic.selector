@@ -1,0 +1,4 @@
+repository "Rocket League 2@Nikosavilaakso@cloud"
+  path "/"
+    br "/main"
+    co "/main"
