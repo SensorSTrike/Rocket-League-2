@@ -7,12 +7,12 @@
             "actions": [
                 {
                     "name": "Throttle",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "b444adc0-bf8a-492e-9550-5e549c2c7c76",
-                    "expectedControlType": "",
+                    "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Brake",
@@ -46,15 +46,37 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "972f9705-2174-43f9-aca3-6f4dff900054",
+                    "name": "1D Axis",
+                    "id": "718c1284-d433-4b3a-8e4a-36bfe095df2f",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throttle",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "4fd6d046-2f98-4248-ba36-57125e20614a",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throttle",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "3176eb35-a896-4ef1-8a8e-ba78b64ef8a0",
                     "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Throttle",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "",

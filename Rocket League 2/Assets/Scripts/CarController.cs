@@ -7,7 +7,6 @@ public class CarController : MonoBehaviour
     [SerializeField] private float acceleration = 100f;
     [SerializeField] private float maxSpeed = 20f;
     [SerializeField] private float turnSpeed = 10f;
-    [SerializeField] private float gripStrength = 5f;
 
     [Header("Wheel Settings")]
     [SerializeField] private Transform[] frontWheels;
@@ -25,61 +24,61 @@ public class CarController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-
-        playerInput = GetComponent<PlayerInput>(); // Ensure a PlayerInput component is attached
+        playerInput = GetComponent<PlayerInput>();
         throttleAction = playerInput.actions["Throttle"];
         turnAction = playerInput.actions["Turn"];
     }
 
-    void Update()
+    void FixedUpdate()
     {
         HandleMovement();
-        ApplyTireGrip();
         UpdateWheels();
+    }
+
+    private void Jump()
+    {
+
     }
 
     private void HandleMovement()
     {
-        float forwardInput = throttleAction.ReadValue<float>(); // Supports both keys & gamepad
-        float turnInput = turnAction.ReadValue<float>();
+        // Get input values for throttle and turn
+        float throttle = throttleAction.ReadValue<float>(); // Forward/Backward input
+        float turn = turnAction.ReadValue<float>();         // Left/Right input
 
-        if (forwardInput != 0)
+        // Calculate forward force
+        Vector3 forwardForce = transform.forward * throttle * acceleration;
+
+        // Apply forward force if below max speed
+        if (rb.linearVelocity.magnitude < maxSpeed)
         {
-            Vector3 moveDirection = rb.transform.forward;
-            Vector3 force = moveDirection * forwardInput * acceleration;
-
-            if (rb.linearVelocity.magnitude < maxSpeed)
-            {
-                rb.AddForce(force, ForceMode.Acceleration);
-            }
+            rb.AddForce(forwardForce, ForceMode.Acceleration);
         }
 
-        rb.AddTorque(Vector3.up * turnInput * turnSpeed);
-    }
-
-    private void ApplyTireGrip()
-    {
-        Vector3 lateralVelocity = Vector3.Project(rb.linearVelocity, transform.right);
-        rb.AddForce(-lateralVelocity * gripStrength, ForceMode.Acceleration);
+        // Apply turn torque for steering
+        float turnForce = turn * turnSpeed;
+        rb.angularVelocity = new Vector3(rb.angularVelocity.x, turnForce, rb.angularVelocity.z);
     }
 
     private void UpdateWheels()
     {
-        float speed = Vector3.Dot(rb.linearVelocity, transform.forward); // signed forward speed
-        float rotationAmount = speed * Time.deltaTime * 360f;
+        // Get steering input
+        float steerAngle = turnAction.ReadValue<float>() * maxSteerAngle;
 
-        float steerInput = turnAction.ReadValue<float>();
-        float steerAngle = steerInput * maxSteerAngle;
-
-        foreach (Transform wheel in backWheels)
+        // Roll and steer the wheels
+        foreach (Transform wheel in allWheels)
         {
-            // Just roll the back wheels
-            wheel.Rotate(Vector3.right, rotationAmount, Space.Self);
+            // Roll the wheels (simulate forward/backward rotation)
+            wheel.Rotate(Vector3.right, rb.linearVelocity.magnitude * Time.fixedDeltaTime * 360f, Space.Self);
+            
         }
 
-        foreach (Transform wheel in frontWheels)
+        foreach (Transform frontWheel in frontWheels)
         {
-            wheel.Rotate(Vector3.right, rotationAmount, Space.Self);
+            // Steer the front wheels
+            //Vector3 localEulerAngles = frontWheel.localEulerAngles;
+            //localEulerAngles.y = steerAngle; // Apply the steering angle
+            //frontWheel.localEulerAngles = localEulerAngles;
         }
     }
 }
